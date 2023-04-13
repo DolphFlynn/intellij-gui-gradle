@@ -1,0 +1,53 @@
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url = uri('https://www.jetbrains.com/intellij-repository/releases') }
+    maven { url = uri('https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/') }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+configurations {
+    guiGenerationTask
+}
+
+dependencies {
+    guiGenerationTask(
+            'com.jetbrains.intellij.java:java-compiler-ant-tasks:223.8214.59'
+    )
+    api(
+            'com.jetbrains.intellij.java:java-gui-forms-rt:223.8214.59'
+    )
+}
+
+tasks.withType(JavaCompile).configureEach {
+    doLast {
+        project.sourceSets.main.output.classesDirs.each { project.mkdir(it) }
+
+        ant.taskdef name: 'javac2', classname: 'com.intellij.ant.Javac2', classpath: configurations.guiGenerationTask.asPath
+
+        ant.javac2 srcdir: project.sourceSets.main.java.srcDirs.join(':'),
+                classpath: project.sourceSets.main.compileClasspath.asPath,
+                destdir: project.sourceSets.main.output.classesDirs.getSingleFile(),
+                source: sourceCompatibility,
+                target: targetCompatibility,
+                includeAntRuntime: false
+    }
+}
+
+jar {
+    manifest {
+        attributes("Main-Class": "Main")
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
