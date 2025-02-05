@@ -3,7 +3,6 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven { url = uri('https://www.jetbrains.com/intellij-repository/releases') }
     maven { url = uri('https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/') }
@@ -20,10 +19,10 @@ configurations {
 
 dependencies {
     guiGenerationTask(
-            'com.jetbrains.intellij.java:java-compiler-ant-tasks:223.8214.59'
+            'com.jetbrains.intellij.java:java-compiler-ant-tasks:243.23654.166'
     )
     api(
-            'com.jetbrains.intellij.java:java-gui-forms-rt:223.8214.59'
+            'com.jetbrains.intellij.java:java-gui-forms-rt:243.23654.166'
     )
 }
 
